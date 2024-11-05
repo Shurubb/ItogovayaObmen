@@ -1,16 +1,13 @@
-from pydoc import resolve
-
 import requests
 import json
 import pprint
 from tkinter import *
 from tkinter import messagebox as mb
-
-from Scripts.pythonProject.venv.Scripts.bottle import response
+from tkinter import ttk
 
 
 def exchange():
-    code = entry.get()
+    code = combobox.get()
     if code:
         try:
             response = requests.get('https://open.er-api.com/v6/latest/USD')
@@ -30,6 +27,9 @@ def exchange():
 window = Tk()
 window.title('Курсы обмена валют')
 window.geometry('150x150')
-Label(text='Введите код валюты').pack(pax=10, pady=10)
-entry = Entry()
-window.mainloop()
+Label(text='Выберите код валюты').pack(padx=10, pady=10)
+cur = ['RUB', 'EUR', 'CNY', 'GBP', 'GPY', 'UZS', 'KZT', 'AED', 'CAD', 'CHF']
+combobox = ttk.Combobox(values=cur)
+combobox.pack(padx = 10, pady = 10)
+# entry = Entry()
+# window.mainloop()
