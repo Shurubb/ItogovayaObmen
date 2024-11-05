@@ -1,0 +1,77 @@
+Index: ItogovayaObmen.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>from pydoc import resolve\r\n\r\nimport requests\r\nimport json\r\nimport pprint\r\nfrom tkinter import *\r\nfrom tkinter import messagebox as mb\r\n\r\nfrom Scripts.pythonProject.venv.Scripts.bottle import response\r\n\r\n\r\ndef exchange():\r\n    code = entry.get()\r\n    if code:\r\n        try:\r\n            response = requests.get('https://open.er-api.com/v6/latest/USD')\r\n            response.raise_for_status()\r\n            data = response.json()\r\n            if code in data['rates']:\r\n                exchange_rate = data['rates'][code]\r\n                mb.showinfo('Курс обмена', f'Курс:  {exchange_rate:.2f} {code} за 1 доллар')\r\n            else:\r\n                mb.showerror('Ошибка', f'Валюта {code} не найдена')\r\n        except Exception as e:\r\n            mb.showerror('Error', f'Произошла ошибка: {e}.')\r\n    else:\r\n        mb.showwarning('Attention!', 'Введите код валюты')\r\n\r\n\r\nwindow = Tk()\r\nwindow.title('Курсы обмена валют')\r\nwindow.geometry('150x150')\r\nLabel(text='Введите код валюты').pack(pax=10, pady=10)\r\nentry = Entry()\r\nwindow.mainloop()\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/ItogovayaObmen.py b/ItogovayaObmen.py
+--- a/ItogovayaObmen.py	(revision 28ca28491a0452d6ecc8a846280486580c331e7b)
++++ b/ItogovayaObmen.py	(date 1730808542449)
+@@ -1,16 +1,19 @@
+-from pydoc import resolve
++from tkinter.ttk import Combobox
+ 
+ import requests
+ import json
+ import pprint
+ from tkinter import *
+ from tkinter import messagebox as mb
++from tkinter import ttk
+ 
+-from Scripts.pythonProject.venv.Scripts.bottle import response
+-
++def up_c_label(event):
++    code = combobox.get()
++    name = cur[code]
++    c_label.config(text=name)
+ 
+ def exchange():
+-    code = entry.get()
++    code = combobox.get()
+     if code:
+         try:
+             response = requests.get('https://open.er-api.com/v6/latest/USD')
+@@ -18,7 +21,8 @@
+             data = response.json()
+             if code in data['rates']:
+                 exchange_rate = data['rates'][code]
+-                mb.showinfo('Курс обмена', f'Курс:  {exchange_rate:.2f} {code} за 1 доллар')
++                c_name= cur[code]
++                mb.showinfo('Курс обмена', f'Курс:  {exchange_rate:.2f} {c_name} за 1 доллар')
+             else:
+                 mb.showerror('Ошибка', f'Валюта {code} не найдена')
+         except Exception as e:
+@@ -26,10 +30,29 @@
+     else:
+         mb.showwarning('Attention!', 'Введите код валюты')
+ 
++cur = {
++    'RUB': 'Российский рубль',
++    'EUR': 'Евро',
++    'CNY': 'Китайский юань',
++    'GBP': 'Фунт стерлингов',
++    'JPY': 'Японская йена',
++    'UZS': 'Узбекский сум',
++    'KZT': 'Казахский тенге',
++    'AED': 'Арабский дирхам',
++    'CAD': 'Канадский доллар',
++    'CHF': 'Швейцарский франк'
++}
+ 
+ window = Tk()
+ window.title('Курсы обмена валют')
+-window.geometry('150x150')
+-Label(text='Введите код валюты').pack(pax=10, pady=10)
+-entry = Entry()
++window.geometry('250x200')
++Label(text='Выберите код валюты').pack(padx=10, pady=10)
++
++combobox = ttk.Combobox(values=list(cur.keys()))
++combobox.pack(padx = 10, pady = 10)
++combobox.bind('<<ComboboxSelected>>', up_c_label)
++c_label = ttk.Label()
++c_label.pack(padx=10, pady=10)
++Button(text='Получить курс обмена к доллару', command=exchange).pack(padx=10, pady=10)
++
+ window.mainloop()
